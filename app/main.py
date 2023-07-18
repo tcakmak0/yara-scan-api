@@ -17,6 +17,7 @@ def yara_scan(file_path, rule_path, success, errors):
             matches = currentRules.match(filepath=file_path)
         except Exception as e:
             print("YARA SCANNING ERROR: DETAILES ADDED TO THE LOG FILE")
+            # TODO: Loggin will be added
         else:
             if matches:
                 if response == "THERE IS NO MATHCING ACCORDING TO THE RULESET":
@@ -35,11 +36,14 @@ def yara_scan(file_path, rule_path, success, errors):
 
 def allowed_file(file_path):
     # Magic Byte Scanner for file types
+    # TODO: Create an array of accepted file and do MIME check accordingly
+
+    allowedTypes = ["vnd.microsoft.portable-executable", "plain", "x-dosexec"]
     magicScanner = magic.Magic(mime=True)
     # Checks wheter the file is .exe or not
     fileType = magicScanner.from_file(file_path).split("/")[1]
 
-    return (fileType == "vnd.microsoft.portable-executable" or fileType == "plain")
+    return (fileType in allowedTypes)
 
 
 app = Flask(__name__)
