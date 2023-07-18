@@ -12,20 +12,23 @@ def yara_scan(file_path, rule_path, success, errors):
 
     if allowed_file(file_path):
         response = ""
-        currentRules = yara.compile(filepath=rule_path)
-        matches = currentRules.match(filepath=file_path)
-        if matches:
-            if response == "THERE IS NO MATHCING ACCORDING TO THE RULESET":
-                response = ""
-            if "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" not in response:
-                response = "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" + response
-            for match in matches:
-                response += " - " + str(match) + "\n"
+        try:
+            currentRules = yara.compile(filepath=rule_path)
+            matches = currentRules.match(filepath=file_path)
+        except Exception as e:
+            print("YARA SCANNING ERROR: DETAILES ADDED TO THE LOG FILE")
         else:
-            if response == "":
-                response = "THERE IS NO MATHCING ACCORDING TO THE RULESET"
-        success[file_path] = response
-
+            if matches:
+                if response == "THERE IS NO MATHCING ACCORDING TO THE RULESET":
+                    response = ""
+                if "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" not in response:
+                    response = "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" + response
+                for match in matches:
+                    response += " - " + str(match) + "\n"
+            else:
+                if response == "":
+                    response = "THERE IS NO MATHCING ACCORDING TO THE RULESET"
+            success[file_path] = response
     else:
         errors[file_path] = 'File type is not allowed'
 
@@ -66,38 +69,44 @@ def upload_file():
     threads = []
 
     ruleList = os.listdir(rule_folder_path)
-    if len(ruleList) > MAX_THREAD_NUMBER:
-        numberOfThreads = MAX_THREAD_NUMBER
+    try:
+        if len(ruleList) == 0:
+            raise ValueError("[ERROR] Rule list is empty")
+        if len(ruleList) > MAX_THREAD_NUMBER:
+            numberOfThreads = MAX_THREAD_NUMBER
+
+        else:
+            numberOfThreads = len(ruleList)
+
+    except Exception as e:
+        print(e)
 
     else:
-        numberOfThreads = len(ruleList)
+        chunks = [ruleList[x:x+numberOfThreads]
+                  for x in range(0, len(ruleList), numberOfThreads)]
+        for file in files:
+            fileName = secure_filename(file.filename)
+            file_path = os.path.join(file_folder_path, fileName)
+            file.save(file_path)
+            for ruleSet in chunks:
+                for rule in ruleSet:
+                    if '.yar' not in rule:
+                        pass
 
-    chunks = [ruleList[x:x+numberOfThreads]
-              for x in range(0, len(ruleList), numberOfThreads)]
+                    rule_directory = os.path.join(rule_folder_path, rule)
+                    scan_thread = threading.Thread(target=yara_scan, args=(
+                        file_path, rule_directory, success, errors))
 
-    for file in files:
-        fileName = secure_filename(file.filename)
-        file_path = os.path.join(file_folder_path, fileName)
-        file.save(file_path)
-        for ruleSet in chunks:
-            for rule in ruleSet:
-                if '.yar' not in rule:
-                    pass
+                    scan_thread.start()
+                    threads.append(scan_thread)
 
-                rule_directory = os.path.join(rule_folder_path, rule)
-                scan_thread = threading.Thread(target=yara_scan, args=(
-                    file_path, rule_directory, success, errors))
+                for thread in threads:
+                    thread.join()
 
-                scan_thread.start()
-                threads.append(scan_thread)
+                threads.clear()
 
-            for thread in threads:
-                thread.join()
-
-            threads.clear()
-
-        for file in os.listdir(file_folder_path):
-            os.remove(os.path.join(file_folder_path, file))
+            for file in os.listdir(file_folder_path):
+                os.remove(os.path.join(file_folder_path, file))
 
     result = errors | success
     resp = jsonify(result)
