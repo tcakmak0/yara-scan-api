@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 
 def yara_scan(file_path, rule_path, success, errors):
-    # You will give the exact path of the file and yara_rule set
+    # YARA scanning function which perfomrs on every thread.
 
     if allowed_file(file_path):
         try:
@@ -45,13 +45,13 @@ def allowed_file(file_path):
     # Magic Byte Scanner for file types
     allowedTypes = ["vnd.microsoft.portable-executable", "plain", "x-dosexec"]
     magicScanner = magic.Magic(mime=True)
-    # Checks wheter the file is .exe or not
+    # In this application only .exe and .txt files are allowed file types. Howevery, any file type can be added into the allowedTypes
     fileType = magicScanner.from_file(file_path).split("/")[1]
     return (fileType in allowedTypes)
 
 
 def file_system_check():
-    # Checks and creates neccesarry directories if they are not exist
+    # Checks and creates neccesarry directories if any of them not exist
 
     workdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if not os.path.isdir(os.path.join(workdir, 'static')):
@@ -81,7 +81,7 @@ def upload_file():
     workdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     rule_folder_path = os.path.join(workdir, 'static', 'yara-rules')
     file_folder_path = os.path.join(workdir, 'static', 'uploads')
-    MAX_THREAD_NUMBER = 16
+    MAX_THREAD_NUMBER = 16  # MAX_THREAD_NUMER CAN BE CHANGED ACCORDING TO YOUR SYSTEM
     files = request.files.getlist('files[]')
 
     success = {}
