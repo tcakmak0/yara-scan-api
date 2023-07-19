@@ -21,16 +21,16 @@ Before you start, ensure you have the following installed on your system:
 
 2. Before running the docker app, modify the .env file according to your preferences. ${PATH_TO_YARA_RULES} must be defined before using and it must be exact path of your yara rules file
 
-````docker
+```docker
 
     PATH_TO_YARA_RULES  = PATH/TO/YOUR/YARA/RULES
-    ```
+```
 
 2. Build the Docker image:
 
 ```bash
     docker-compose build
-````
+```
 
 3. Start the YARA-Scanner containers and Nginx:
 
@@ -40,7 +40,7 @@ Before you start, ensure you have the following installed on your system:
 
 4. Access the application
 
-Once everything is up and running, you can access the YARA-Scanner application at http://localhost:8080/ in your web browser. To do a scan over a .exe, by using an app such as postman, send post request with "files[]" key to http://localhost:8080/upload. (Remember that 8080 and localhost are default settings defined in .env, if you changed them check the appropriate links)
+Once everything is up and running, you can access the YARA-Scanner application at http://localhost:8080/ in your web browser. To do a scan over a .exe, by using an app such as postman, send post request with "files[]" key to http://localhost:8080/upload. (Remember that 8080 and localhost are default settings defined in .env, if you changed them check the appropriate links.)
 
 ## Application Components
 
@@ -159,3 +159,7 @@ Any errors that occur during YARA scanning will be logged in the "error.log" fil
 
 - The application is intended for educational and informational purposes. Ensure you have proper authorization before scanning any files and do not use it to violate privacy or infringe upon the rights of others.
 - For a production environment, additional security measures and configurations may be necessary.
+
+```
+
+```
