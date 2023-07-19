@@ -22,7 +22,6 @@ Before you start, ensure you have the following installed on your system:
 2. Before running the docker app, modify the .env file according to your preferences. ${PATH_TO_YARA_RULES} must be defined before using and it must be exact path of your yara rules file
 
 ```docker
-
     PATH_TO_YARA_RULES  = PATH/TO/YOUR/YARA/RULES
 ```
 
