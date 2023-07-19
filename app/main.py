@@ -3,6 +3,7 @@ import yara
 import magic
 import threading
 import logging
+from dotenv import load_dotenv
 
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
@@ -137,5 +138,7 @@ def upload_file():
 if __name__ == '__main__':
     logging.basicConfig(filename='error.log', level=logging.ERROR,
                         format='%(asctime)s - %(levelname)s - %(message)s')
+    load_dotenv()
     file_system_check()
-    app.run(port=8080, host="0.0.0.0")
+    app.run(debug=True, port=os.environ.get(
+        "HOST_PORT"), host=os.environ.get("HOST_IP"))
