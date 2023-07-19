@@ -2,17 +2,40 @@ version: "3.9"
 
 services:
 
-  scanner:
+  scanner_1:
     build: .
     
     volumes:
       - C:\Users\Public\asd:/yara-app/static/yara-rules
+  
+  scanner_2:
+    build: .
+    
+    volumes:
+      - C:\Users\Public\asd:/yara-app/static/yara-rules
+  
+  scanner_3:
+    build: .
+    
+    volumes:
+      - C:\Users\Public\asd:/yara-app/static/yara-rules
+  
+  scanner_4:
+    build: .
+    
+    volumes:
+      - C:\Users\Public\asd:/yara-app/static/yara-rules
+
+
   nginx:
     image: nginx:latest
     volumes:
       - ./conf.d:/etc/nginx/conf.d
     depends_on:
-      - scanner
+      - scanner_1
+      - scanner_2
+      - scanner_3
+      - scanner_4
     ports:
       - 8080:8080
 
