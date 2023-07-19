@@ -2,6 +2,7 @@ import os
 import yara
 import magic
 import threading
+import logging
 
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
@@ -11,38 +12,41 @@ def yara_scan(file_path, rule_path, success, errors):
     # You will give the exact path of the file and yara_rule set
 
     if allowed_file(file_path):
-        response = ""
         try:
             currentRules = yara.compile(filepath=rule_path)
             matches = currentRules.match(filepath=file_path)
+            if file_path not in success:
+                success[file_path] = ""
+
+            if matches:
+                if success[file_path] == "THERE IS NO MATHCING ACCORDING TO THE RULESET":
+                    success[file_path] = ""
+
+                if "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" not in success[file_path]:
+                    success[file_path] = "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" + \
+                        success[file_path]
+                for match in matches:
+                    success[file_path] = success[file_path] + \
+                        " - " + str(match) + "\n"
+            else:
+                if success[file_path] == "":
+                    success[file_path] = "THERE IS NO MATHCING ACCORDING TO THE RULESET"
+
         except Exception as e:
             print("YARA SCANNING ERROR: DETAILES ADDED TO THE LOG FILE")
-            # TODO: Loggin will be added
-        else:
-            if matches:
-                if response == "THERE IS NO MATHCING ACCORDING TO THE RULESET":
-                    response = ""
-                if "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" not in response:
-                    response = "YARA SCANNER DETECTED FOLLOWING MATCHES: \n" + response
-                for match in matches:
-                    response += " - " + str(match) + "\n"
-            else:
-                if response == "":
-                    response = "THERE IS NO MATHCING ACCORDING TO THE RULESET"
-            success[file_path] = response
+            logging.exception(e)
+            errors["YARA SCANNING ERROR"] = "FOR SOME YARA RULES SOMETHING WENT WRONG, DETAILS IN error.log"
+
     else:
         errors[file_path] = 'File type is not allowed'
 
 
 def allowed_file(file_path):
     # Magic Byte Scanner for file types
-    # TODO: Create an array of accepted file and do MIME check accordingly
-
     allowedTypes = ["vnd.microsoft.portable-executable", "plain", "x-dosexec"]
     magicScanner = magic.Magic(mime=True)
     # Checks wheter the file is .exe or not
     fileType = magicScanner.from_file(file_path).split("/")[1]
-
     return (fileType in allowedTypes)
 
 
@@ -119,4 +123,6 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080, host="0.0.0.0")
+    logging.basicConfig(filename='error.log', level=logging.ERROR,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
+    app.run(port=8080, host="0.0.0.0")
