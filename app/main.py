@@ -67,7 +67,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def main():
-    return "YARA-SCANNER HOMEPAGE"
+    return "YARA-SCANNER HOMEPAGE \n WELCOME TO PYTHON-YARA-SCAN-API"
 
 
 @app.route('/upload', methods=['POST'])
