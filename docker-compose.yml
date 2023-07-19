@@ -4,27 +4,31 @@ services:
 
   scanner_1:
     build: .
-    
+    env_file:
+      - .env
     volumes:
-      - C:\Users\Public\asd:/yara-app/static/yara-rules
+      - ${PATH_TO_YARA_RULES}:/yara-app/static/yara-rules
   
   scanner_2:
     build: .
-    
+    env_file:
+      - .env
     volumes:
-      - C:\Users\Public\asd:/yara-app/static/yara-rules
+      - ${PATH_TO_YARA_RULES}:/yara-app/static/yara-rules
   
   scanner_3:
     build: .
-    
+    env_file:
+      - .env
     volumes:
-      - C:\Users\Public\asd:/yara-app/static/yara-rules
+      - ${PATH_TO_YARA_RULES}:/yara-app/static/yara-rules
   
   scanner_4:
     build: .
-    
+    env_file:
+      - .env
     volumes:
-      - C:\Users\Public\asd:/yara-app/static/yara-rules
+      - ${PATH_TO_YARA_RULES}:/yara-app/static/yara-rules
 
 
   nginx:
@@ -36,7 +40,9 @@ services:
       - scanner_2
       - scanner_3
       - scanner_4
+    env_file:
+      - .env
     ports:
-      - 8080:8080
+      - ${HOST_PORT}:8080
 
     
