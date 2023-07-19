@@ -130,6 +130,10 @@ Once the application is running, you can access it at http://localhost:8080/ in 
 
 To scan files, use the "/upload" endpoint with a POST request. The application supports uploading multiple files at once using the "files[]" key.
 
+### Allowed file tyeps
+
+In this program we are only interested in scanning '.txt' and '.exe' files. However, this property can be modified by modifying **allowed_files()** method in the main.py. For details, please check the main.py
+
 ### YARA Rules
 
 Place your YARA rules (with .yar extension) in the "static/yara-rules" directory before starting the application.
