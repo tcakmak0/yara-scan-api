@@ -158,7 +158,3 @@ Any errors that occur during YARA scanning will be logged in the "error.log" fil
 
 - The application is intended for educational and informational purposes. Ensure you have proper authorization before scanning any files and do not use it to violate privacy or infringe upon the rights of others.
 - For a production environment, additional security measures and configurations may be necessary.
-
-```
-
-```
