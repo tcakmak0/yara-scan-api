@@ -42,7 +42,7 @@ Before you start, ensure you have the following installed on your system:
 
 4. Access the application
 
-Once everything is up and running, you can access the YARA-Scanner application at http://localhost:8080/ in your web browser. To do a scan over a .exe, by using an app such as postman, send post request with "files[]" key.
+Once everything is up and running, you can access the YARA-Scanner application at http://localhost:8080/ in your web browser. To do a scan over a .exe, by using an app such as postman, send post request with "files[]" key to http://localhost:8080/upload.
 
 ## Application Components
 
@@ -65,23 +65,30 @@ The `docker-compose.yml` file defines multiple instances of the YARA-Scanner app
 The Nginx configuration `nginx/conf.d/default.conf` sets up the reverse proxy and load balancing:
 
 ```nginx
-upstream scanner_backend {
-    server scanner_1:8080;
-    server scanner_2:8080;
-    server scanner_3:8080;
-    server scanner_4:8080;
-    # Add more server entries for additional instances of the "scanner" service
-}
+    upstream scanner_backend {
+        server scanner_1:8080;
+        server scanner_2:8080;
+        server scanner_3:8080;
+        server scanner_4:8080;
 
-server {
-    listen 8080;
-
-    location / {
-        proxy_pass http://scanner_backend/upload;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+        # Add more server entries for additional instances of the "scanner" service
     }
-}
+
+    server {
+        listen 8080;
+
+        location / {
+            proxy_pass http://scanner_backend/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /upload {
+            proxy_pass http://scanner_backend/upload;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+    }
 ```
 
 The `upstream` block in the nginx configuration defines the backend servers for load balancing. Requests to `/upload` are proxied to the `scanner_backend`, which consists of the YARA-Scanner instances.
@@ -124,7 +131,7 @@ Installation can be done easily by using the following command after copying an 
 
 ## Program Details
 
-Once the application is running, you can access it at http://localhost:8080/ in your web browser.
+Once the application is running, you can access it at http://localhost:8080/ in your web browser. To do a YARA-SCAN send your file with a POST reques to /upload endpoint. Your http request must contain a 'files[]' key whose content is the .exe and .txt files you want to scan.
 
 ### Uploading Files
 
