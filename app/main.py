@@ -50,6 +50,18 @@ def allowed_file(file_path):
     return (fileType in allowedTypes)
 
 
+def file_system_check():
+    # Checks and creates neccesarry directories if they are not exist
+
+    workdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if not os.path.isdir(os.path.join(workdir, 'static')):
+        os.mkdir(os.path.join(workdir, 'static'))
+    if not os.path.isdir(os.path.join(workdir, 'static', 'yara-rules')):
+        os.mkdir(os.path.join(workdir, 'static', 'yara-rules'))
+    if not os.path.isdir(os.path.join(workdir, 'static', 'uploads')):
+        os.mkdir(os.path.join(workdir, 'static', 'uploads'))
+
+
 app = Flask(__name__)
 
 
@@ -125,4 +137,5 @@ def upload_file():
 if __name__ == '__main__':
     logging.basicConfig(filename='error.log', level=logging.ERROR,
                         format='%(asctime)s - %(levelname)s - %(message)s')
+    file_system_check()
     app.run(port=8080, host="0.0.0.0")
