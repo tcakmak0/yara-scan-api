@@ -81,7 +81,7 @@ def upload_file():
     workdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     rule_folder_path = os.path.join(workdir, 'static', 'yara-rules')
     file_folder_path = os.path.join(workdir, 'static', 'uploads')
-    MAX_THREAD_NUMBER = 16  # MAX_THREAD_NUMER CAN BE CHANGED ACCORDING TO YOUR SYSTEM
+    MAX_THREAD_NUMBER = os.cpu_count()
     files = request.files.getlist('files[]')
 
     success = {}
