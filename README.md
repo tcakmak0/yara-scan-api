@@ -151,7 +151,7 @@ Uploaded files will be saved in the "static/uploads" directory during the scanni
 
 ### Thread Handling
 
-The YARA-Scanner application uses threading to improve performance when scanning files against multiple YARA rules. You can set the `MAX_THREAD_NUMBER` variable in the "app.py" file to control the maximum number of threads used during scanning.
+The YARA-Scanner application uses threading to improve performance when scanning files against multiple YARA rules. MAX_THREAD_NUMBER decided authomatically according to CPU core number.
 
 ### Error Logging
 
