@@ -19,7 +19,7 @@ Before you start, ensure you have the following installed on your system:
    cd yara-scan-api
 ```
 
-2. Specify the directory of YARA-Rules for bind mount. Go to 'docker-compose.yml' and change volume part of every instance of the scanner service accordingly
+2. To configure the directory for YARA rules, modify the bind mount settings in the 'docker-compose.yml' file for each instance of the scanner service.
 
 ```docker-compose
     scanner_3:
@@ -46,7 +46,7 @@ Once everything is up and running, you can access the YARA-Scanner application a
 
 ## Application Components
 
-The YARA-Scanner application consists of the following components:
+The YARA-Scanner application comprises the following components:
 
 1. **app/main.py**: Python Flask web application that handles file uploading and YARA scanning.
 
@@ -84,7 +84,7 @@ server {
 }
 ```
 
-The `upstream` block defines the backend servers for load balancing. Requests to `/upload` are proxied to the `scanner_backend`, which consists of the YARA-Scanner instances.
+The `upstream` block in the nginx configuration defines the backend servers for load balancing. Requests to `/upload` are proxied to the `scanner_backend`, which consists of the YARA-Scanner instances.
 
 This setup ensures that incoming requests are distributed among the available instances of the YARA-Scanner application, providing better scalability and fault tolerance.
 
@@ -92,7 +92,7 @@ Make sure to follow the instructions in the README.md to properly set up and run
 
 ## YARA Rules and Uploaded Files
 
-YARA rules (with .yar extension) should be placed in the `static/yara-rules` directory within the application. However, If you plan to use it by docker and use another directory for rules be sure to mount bindings of the directory and change the configuration of volume accordingly in docker-compose.yml.
+YARA rules (with .yar extension) should be placed in the `static/yara-rules` directory within the application. However, If you plan to use the application with Docker and store YARA rules in a different directory, ensure you configure the volume bindings accordingly in the docker-compose.yml file.
 
 '''docker-compose
 volumes: - YOUR/DIRECTORY/TO/YARA_RULES:/yara-app/static/yara-rules
@@ -109,7 +109,7 @@ YARA-Scanner is a web application that allows you to scan uploaded files against
 
 ## Python based prerequisites
 
-If you plan to use app without Docker and load balancing before running the YARA-Scanner application, make sure you have the following installed:
+If you intend to run the YARA-Scanner application without Docker and load balancing, ensure you have the following dependencies installed:
 
 - Python 3.x
 - Flask (Python web framework)
@@ -132,7 +132,7 @@ To scan files, use the "/upload" endpoint with a POST request. The application s
 
 ### Allowed file tyeps
 
-In this program we are only interested in scanning '.txt' and '.exe' files. However, this property can be modified by modifying **allowed_files()** method in the main.py. For details, please check the main.py
+The YARA-Scanner program currently supports scanning '.txt' and '.exe' files. However, you can modify this behavior by adjusting the **allowed_files()** method in the main.py file. Refer to the main.py file for more information.
 
 ### YARA Rules
 
