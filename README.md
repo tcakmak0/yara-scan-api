@@ -116,7 +116,7 @@ If you plan to use app without Docker and load balancing before running the YARA
 - yara-python (Python bindings for YARA)
 - python-magic (Python bindings for libmagic)
 
-Installation can be done easly by using the following command after copying an instance of requirements.txt into your local:
+Installation can be done easily by using the following command after copying an instance of requirements.txt into your local:
 
 ```bash
     pip install -r requirements.txt
