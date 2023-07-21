@@ -4,6 +4,7 @@ import magic
 import threading
 import logging
 from dotenv import load_dotenv
+from logging.handlers import TimedRotatingFileHandler
 
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
@@ -63,6 +64,24 @@ def file_system_check():
         os.mkdir(os.path.join(workdir, 'static', 'uploads'))
 
 
+def setup_logging():
+    # Configure the log handler to rotate error.log every week
+    log_file = 'error.log'
+    log_level = logging.ERROR
+
+    log_handler = TimedRotatingFileHandler(
+        filename=log_file, when='W0', backupCount=3)
+    log_handler.setLevel(log_level)
+
+    log_format = '%(asctime)s - %(levelname)s - %(message)s'
+    formatter = logging.Formatter(log_format)
+    log_handler.setFormatter(formatter)
+
+    logger = logging.getLogger()
+    logger.addHandler(log_handler)
+    logger.setLevel(log_level)
+
+
 app = Flask(__name__)
 
 
@@ -111,7 +130,7 @@ def upload_file():
             file.save(file_path)
             for ruleSet in chunks:
                 for rule in ruleSet:
-                    if '.yar' not in rule:
+                    if not rule.endswith('.yar'):
                         pass
 
                     rule_directory = os.path.join(rule_folder_path, rule)
@@ -136,9 +155,8 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='error.log', level=logging.ERROR,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
+    setup_logging()
     load_dotenv()
     file_system_check()
-    app.run(debug=True, port=os.environ.get(
+    app.run(port=os.environ.get(
         "HOST_PORT"), host=os.environ.get("HOST_IP"))
